@@ -1,69 +1,57 @@
-# Welcome to your Lovable project
+# CureTrackr - AI-Powered Medical Diagnosis Platform
 
-## Project info
+CureTrackr is a modern web application that provides AI-powered medical diagnosis and treatment recommendations. Built with React, TypeScript, and powered by advanced AI technology, it offers a user-friendly interface for users to input their symptoms and receive potential diagnoses.
 
-**URL**: https://lovable.dev/projects/542a384f-f56f-4554-ae74-e8a411b5fab0
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+- **AI-Powered Diagnosis**: Advanced AI analysis of symptoms for potential diagnoses
+- **Treatment Information**: Detailed treatment plans and medication recommendations
+- **Multi-Language Support**: Access medical information in multiple languages
+- **Modern UI/UX**: Beautiful and responsive design with smooth animations
+- **Privacy-Focused**: Secure handling of medical information
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/542a384f-f56f-4554-ae74-e8a411b5fab0) and start prompting.
+## 📋 Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js (v16 or higher)
+- npm or bun package manager
 
-**Use your preferred IDE**
+## 🛠️ Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/cure-trackr.git
+cd cure-trackr
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+```bash
+npm install
+# or
+bun install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Start the development server:
+```bash
+npm run dev
+# or
+bun dev
+```
 
-**Use GitHub Codespaces**
+## ⚠️ Disclaimer
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This application is for educational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
 
-## What technologies are used for this project?
+## 📄 License
 
-This project is built with .
+This project is licensed under the MIT License 
+## 🤝 Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/542a384f-f56f-4554-ae74-e8a411b5fab0) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
