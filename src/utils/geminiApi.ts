@@ -3,48 +3,51 @@ import { GEMINI_API_KEY } from "@/lib/constants";
 import { DiagnosisResponse, Symptom } from "@/types";
 import { toast } from "sonner";
 
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+// Updated API URL to use the correct endpoint format for the Gemini API
+const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
 export async function getDiagnosis(symptoms: Symptom[], language: string = "en"): Promise<DiagnosisResponse | null> {
   try {
     const symptomTexts = symptoms.map(s => s.text).join(", ");
     
     const promptContent = {
-      role: "user",
-      parts: [
+      contents: [
         {
-          text: `Based on the following symptoms: ${symptomTexts}, provide a medical diagnosis with potential diseases, 
-          their confidence scores (0-100), and detailed treatment plans.
-          
-          I need:
-          1. A list of up to 5 possible diseases with confidence scores
-          2. Brief descriptions of each disease
-          3. Treatment options for each disease (both traditional and alternative)
-          4. Specific medicines with dosage information and potential side effects
-          5. Preventive measures for each disease
-          
-          Format the response as a structured JSON object without any additional text. 
-          The response should be in ${language} language.
-          
-          Important: Include a disclaimer about seeking professional medical advice.`
+          parts: [
+            {
+              text: `Based on the following symptoms: ${symptomTexts}, provide a medical diagnosis with potential diseases, 
+              their confidence scores (0-100), and detailed treatment plans.
+              
+              I need:
+              1. A list of up to 5 possible diseases with confidence scores
+              2. Brief descriptions of each disease
+              3. Treatment options for each disease (both traditional and alternative)
+              4. Specific medicines with dosage information and potential side effects
+              5. Preventive measures for each disease
+              
+              Format the response as a structured JSON object without any additional text. 
+              The response should be in ${language} language.
+              
+              Important: Include a disclaimer about seeking professional medical advice.`
+            }
+          ]
         }
-      ]
+      ],
+      generationConfig: {
+        temperature: 0.4,
+        topK: 32,
+        topP: 0.95,
+        maxOutputTokens: 4096,
+      }
     };
     
+    // Updated request structure to match the latest Gemini API format
     const response = await fetch(`${API_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        contents: [promptContent],
-        generationConfig: {
-          temperature: 0.4,
-          topK: 32,
-          topP: 0.95,
-          maxOutputTokens: 4096,
-        }
-      }),
+      body: JSON.stringify(promptContent),
     });
     
     if (!response.ok) {
@@ -61,6 +64,7 @@ export async function getDiagnosis(symptoms: Symptom[], language: string = "en")
     
     try {
       const responseText = data.candidates[0].content.parts[0].text;
+      console.log("API Response:", responseText);
       
       // Try to extract JSON from the text if it contains a JSON block
       if (responseText.includes("{") && responseText.includes("}")) {

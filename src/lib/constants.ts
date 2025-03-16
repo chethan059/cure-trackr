@@ -1,4 +1,3 @@
-
 export const GEMINI_API_KEY = "AIzaSyDDYp03sx2CrWuMhhbmHHuxdJp2BLkssDI";
 
 export const SYMPTOM_SUGGESTIONS = [
