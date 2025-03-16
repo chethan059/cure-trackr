@@ -1,6 +1,6 @@
 
 import { GEMINI_API_KEY } from "@/lib/constants";
-import { DiagnosisResponse, Symptom } from "@/types";
+import { DiagnosisResponse, Symptom, DiagnosisItem, Treatment, Medicine } from "@/types";
 import { toast } from "sonner";
 
 // Updated API URL to use the correct endpoint format for the Gemini API
@@ -70,18 +70,16 @@ export async function getDiagnosis(symptoms: Symptom[], language: string = "en")
       if (responseText.includes("{") && responseText.includes("}")) {
         const jsonMatch = responseText.match(/({[\s\S]*})/);
         if (jsonMatch && jsonMatch[0]) {
-          diagnosisData = JSON.parse(jsonMatch[0]);
+          const parsedData = JSON.parse(jsonMatch[0]);
+          
+          // Handle different response formats
+          diagnosisData = transformResponseFormat(parsedData);
         } else {
-          diagnosisData = JSON.parse(responseText);
+          diagnosisData = transformResponseFormat(JSON.parse(responseText));
         }
       } else {
         // Fallback parsing if JSON is not properly formatted
         diagnosisData = formatFallbackResponse(responseText);
-      }
-      
-      // Ensure diagnosis is an array
-      if (!Array.isArray(diagnosisData.diagnosis)) {
-        diagnosisData.diagnosis = [diagnosisData.diagnosis];
       }
       
       return diagnosisData;
@@ -96,6 +94,92 @@ export async function getDiagnosis(symptoms: Symptom[], language: string = "en")
     toast.error("Error connecting to diagnosis service. Please try again later.");
     return null;
   }
+}
+
+// Function to transform various response formats into our expected DiagnosisResponse format
+function transformResponseFormat(data: any): DiagnosisResponse {
+  // Check if the response has our expected format already
+  if (data.diagnosis && Array.isArray(data.diagnosis)) {
+    return data;
+  }
+  
+  // Check for possibleDiseases format
+  if (data.possibleDiseases || data.possibleDiseases) {
+    const diseases = data.possibleDiseases || data.possibleDiseases;
+    return {
+      diagnosis: diseases.map((disease: any) => {
+        // Transform to our expected format
+        const diagnosisItem: DiagnosisItem = {
+          disease: disease.name || disease.disease || "Unknown Disease",
+          confidence: disease.confidence || 0,
+          description: disease.description || "",
+          treatments: [],
+          medicines: [],
+          preventiveMeasures: disease.prevention || []
+        };
+        
+        // Handle treatments
+        if (disease.treatment) {
+          // Handle traditional treatments
+          if (disease.treatment.traditional) {
+            disease.treatment.traditional.forEach((item: any) => {
+              if (typeof item === 'string') {
+                diagnosisItem.treatments.push({
+                  name: item,
+                  description: "",
+                  type: "traditional"
+                });
+              } else if (item.type && item.details) {
+                diagnosisItem.treatments.push({
+                  name: item.type,
+                  description: item.details,
+                  type: "traditional"
+                });
+                
+                // Check if this contains medicine info
+                if (item.type === "Over-the-counter medications" && Array.isArray(item.details)) {
+                  item.details.forEach((med: any) => {
+                    if (med.medicine) {
+                      diagnosisItem.medicines.push({
+                        name: med.medicine,
+                        dosage: med.dosage || "",
+                        sideEffects: typeof med.sideEffects === 'string' ? [med.sideEffects] : []
+                      });
+                    }
+                  });
+                }
+              }
+            });
+          }
+          
+          // Handle alternative treatments
+          if (disease.treatment.alternative) {
+            disease.treatment.alternative.forEach((item: any) => {
+              if (typeof item === 'string') {
+                diagnosisItem.treatments.push({
+                  name: item,
+                  description: "",
+                  type: "alternative"
+                });
+              } else if (item.type && item.details) {
+                diagnosisItem.treatments.push({
+                  name: item.type,
+                  description: item.details,
+                  type: "alternative"
+                });
+              }
+            });
+          }
+        }
+        
+        return diagnosisItem;
+      }),
+      disclaimer: data.disclaimer || "This is not medical advice. Please consult a healthcare professional for proper diagnosis and treatment."
+    };
+  }
+  
+  // Return fallback if we can't determine the format
+  return formatFallbackResponse("");
 }
 
 // Fallback function to format unstructured response data
