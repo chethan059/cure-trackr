@@ -5,10 +5,19 @@ import ResultsDisplay from "@/components/ResultsDisplay";
 import { DiagnosisResponse, Symptom } from "@/types";
 import { getDiagnosis } from "@/utils/geminiApi";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [diagnosisResults, setDiagnosisResults] = useState<DiagnosisResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
   
   const handleSubmit = async (symptoms: Symptom[], language: string) => {
     setIsLoading(true);
@@ -35,7 +44,7 @@ const Index = () => {
       <header className="py-6 px-4 sm:px-6 lg:px-8 border-b">
         <div className="w-full max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-1">
               <div className="bg-gradient-to-r from-medical-600 to-health-600 p-2 rounded-lg">
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -57,6 +66,9 @@ const Index = () => {
                 <p className="text-xs text-muted-foreground">AI-Powered Medical Diagnosis</p>
               </div>
             </div>
+            <Button variant="outline" onClick={handleLogout}>
+              Sign Out
+            </Button>
           </div>
         </div>
       </header>
