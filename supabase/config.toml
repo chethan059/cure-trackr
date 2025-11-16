@@ -1,0 +1,4 @@
+project_id = "exppigpplzmteijuvtcu"
+
+[functions.diagnose]
+verify_jwt = false
